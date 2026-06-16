@@ -37,6 +37,7 @@ public class EffectEngine {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void executeSingleEffect(Player player, String effect) {
         String trimmed = effect.trim();
         String lower = trimmed.toLowerCase();
