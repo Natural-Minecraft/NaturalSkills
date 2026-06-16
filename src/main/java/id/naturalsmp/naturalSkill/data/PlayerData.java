@@ -9,6 +9,7 @@ public class PlayerData {
     private final UUID uuid;
     private int points;
     private final Set<String> unlockedSkills;
+    private String name = "";
 
     public PlayerData(UUID uuid) {
         this.uuid = uuid;
@@ -22,8 +23,23 @@ public class PlayerData {
         this.unlockedSkills = new HashSet<>(unlockedSkills);
     }
 
+    public PlayerData(UUID uuid, String name, int points, Set<String> unlockedSkills) {
+        this.uuid = uuid;
+        this.name = name;
+        this.points = points;
+        this.unlockedSkills = new HashSet<>(unlockedSkills);
+    }
+
     public UUID getUuid() {
         return uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPoints() {

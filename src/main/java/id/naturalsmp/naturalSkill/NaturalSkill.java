@@ -19,17 +19,25 @@ public final class NaturalSkill extends JavaPlugin {
     private HookManager hookManager;
     private PlayerManager playerManager;
     private EffectEngine effectEngine;
+    private id.naturalsmp.naturalSkill.data.LeaderboardManager leaderboardManager;
+
+    private final java.util.Map<String, String> skillCategoryMap = new java.util.HashMap<>();
+    private final java.util.Map<String, Integer> skillCostMap = new java.util.HashMap<>();
 
     @Override
     public void onEnable() {
         // 1. Initialize Configuration
         this.configManager = new ConfigManager(this);
+        loadSkillConfigMapping();
 
         // 2. Initialize HookManager (Vault, MMOItems, mcMMO)
         this.hookManager = new HookManager(this);
 
         // 3. Initialize PlayerManager & Data
         this.playerManager = new PlayerManager(this);
+
+        // 3.5 Initialize LeaderboardManager
+        this.leaderboardManager = new id.naturalsmp.naturalSkill.data.LeaderboardManager(this);
 
         // 4. Initialize Effects Engine
         this.effectEngine = new EffectEngine(this);
@@ -50,6 +58,21 @@ public final class NaturalSkill extends JavaPlugin {
             playerManager.loadPlayerData(p.getUniqueId());
         }
 
+        // 8. Register PlaceholderAPI Expansion
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new id.naturalsmp.naturalSkill.hooks.NaturalSkillExpansion(this).register();
+            getLogger().info("PlaceholderAPI Expansion registered successfully!");
+        }
+
+        // 9. Start Leaderboard Updates
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            leaderboardManager.updateLeaderboardsAsync();
+        }, 100L);
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+            leaderboardManager.updateLeaderboardsAsync();
+        }, 6000L, 6000L); // every 5 minutes
+
         getLogger().info("NaturalSkill has been enabled successfully!");
     }
 
@@ -60,6 +83,24 @@ public final class NaturalSkill extends JavaPlugin {
             playerManager.saveAll();
         }
         getLogger().info("NaturalSkill has been disabled and player data saved.");
+    }
+
+    public void loadSkillConfigMapping() {
+        skillCategoryMap.clear();
+        skillCostMap.clear();
+        org.bukkit.configuration.file.FileConfiguration cfg = configManager.getConfig();
+        if (cfg.contains("categories")) {
+            for (String categoryId : cfg.getConfigurationSection("categories").getKeys(false)) {
+                String branchPath = "categories." + categoryId + ".branches";
+                if (cfg.contains(branchPath)) {
+                    for (String skillId : cfg.getConfigurationSection(branchPath).getKeys(false)) {
+                        int cost = cfg.getInt(branchPath + "." + skillId + ".cost", 0);
+                        skillCategoryMap.put(skillId.toLowerCase(), categoryId.toLowerCase());
+                        skillCostMap.put(skillId.toLowerCase(), cost);
+                    }
+                }
+            }
+        }
     }
 
     private void registerCommand(String name, SkillCommand executor, SkillTabCompleter completer) {
@@ -86,5 +127,17 @@ public final class NaturalSkill extends JavaPlugin {
 
     public EffectEngine getEffectEngine() {
         return effectEngine;
+    }
+
+    public id.naturalsmp.naturalSkill.data.LeaderboardManager getLeaderboardManager() {
+        return leaderboardManager;
+    }
+
+    public java.util.Map<String, String> getSkillCategoryMap() {
+        return skillCategoryMap;
+    }
+
+    public java.util.Map<String, Integer> getSkillCostMap() {
+        return skillCostMap;
     }
 }

@@ -358,6 +358,10 @@ public class SkillGui {
             playerData.unlockSkill(fullKey);
             plugin.getPlayerManager().savePlayerData(player.getUniqueId());
 
+            // Update live leaderboard score
+            int newScore = plugin.getLeaderboardManager().calculateScore(playerData.getUnlockedSkills(), categoryId);
+            plugin.getLeaderboardManager().updatePlayerScore(player.getUniqueId(), player.getName(), categoryId, newScore);
+
             // Run effects
             List<String> effects = config.getStringList(path + ".effects");
             plugin.getEffectEngine().executeEffects(player, effects);

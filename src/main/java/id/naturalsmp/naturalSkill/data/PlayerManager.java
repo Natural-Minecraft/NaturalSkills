@@ -41,16 +41,28 @@ public class PlayerManager {
         File file = new File(dataFolder, uuid.toString() + ".yml");
         if (!file.exists()) {
             PlayerData data = new PlayerData(uuid);
+            org.bukkit.entity.Player online = org.bukkit.Bukkit.getPlayer(uuid);
+            if (online != null) {
+                data.setName(online.getName());
+            }
             dataCache.put(uuid, data);
             return data;
         }
 
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
+        String name = config.getString("name", "");
         int points = config.getInt("points", 0);
         List<String> unlockedList = config.getStringList("unlocked_skills");
         Set<String> unlockedSet = new HashSet<>(unlockedList);
 
-        PlayerData data = new PlayerData(uuid, points, unlockedSet);
+        if (name.isEmpty()) {
+            org.bukkit.entity.Player online = org.bukkit.Bukkit.getPlayer(uuid);
+            if (online != null) {
+                name = online.getName();
+            }
+        }
+
+        PlayerData data = new PlayerData(uuid, name, points, unlockedSet);
         dataCache.put(uuid, data);
         return data;
     }
@@ -65,6 +77,12 @@ public class PlayerManager {
         File file = new File(dataFolder, uuid.toString() + ".yml");
         FileConfiguration config = new YamlConfiguration();
 
+        org.bukkit.entity.Player online = org.bukkit.Bukkit.getPlayer(uuid);
+        if (online != null) {
+            data.setName(online.getName());
+        }
+
+        config.set("name", data.getName());
         config.set("points", data.getPoints());
         config.set("unlocked_skills", new ArrayList<>(data.getUnlockedSkills()));
 
