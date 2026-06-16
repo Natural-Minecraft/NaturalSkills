@@ -24,6 +24,14 @@ public class SkillGui {
     // Track active cost edits temporarily: Player UUID -> Map of (SkillKey -> TempCost)
     private static final Map<UUID, Integer> activeCostEdits = new HashMap<>();
 
+    /**
+     * Clears the temporary cost edit entry for a player.
+     * Called externally (e.g., from GuiListener on inventory close) to prevent memory leaks.
+     */
+    public static void clearCostEdit(UUID uuid) {
+        activeCostEdits.remove(uuid);
+    }
+
     public SkillGui(NaturalSkill plugin, Player player) {
         this.plugin = plugin;
         this.player = player;

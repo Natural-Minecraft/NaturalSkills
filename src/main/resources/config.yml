@@ -156,7 +156,7 @@ categories:
           - "&7Biaya: &e%cost% Skill Points"
           - "&7Status: %status%"
         effects:
-          - "[mcmmo] addxp herbalism 1000"
+          - "[mcmmo] herbalism 1000"
           - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &5Focus I&f! McMMO Herbalism XP bertambah &d1000&f!"
           - "[sound] ENTITY_PLAYER_LEVELUP"
 
@@ -182,6 +182,6 @@ categories:
           - "&7Status: %status%"
         effects:
           - "[vault] give 500"
-          - "[mmoitems] give %player% SWORD EXCALIBUR 1"
+          - "[mmoitems] SWORD EXCALIBUR 1"
           - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &eCharisma I&f! Kamu mendapatkan &a$500 &fdan item custom &eExcalibur&f!"
           - "[sound] ENTITY_PLAYER_LEVELUP"

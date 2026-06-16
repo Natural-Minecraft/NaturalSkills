@@ -11,8 +11,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-
 public class SkillCommand implements CommandExecutor {
 
     private final NaturalSkill plugin;
@@ -101,8 +99,15 @@ public class SkillCommand implements CommandExecutor {
                 return true;
             }
 
-            @SuppressWarnings("deprecation")
-            OfflinePlayer target = Bukkit.getOfflinePlayer(targetName);
+            // First check if the player is currently online (cheapest lookup)
+            Player onlineCheck = Bukkit.getPlayerExact(targetName);
+            OfflinePlayer target;
+            if (onlineCheck != null) {
+                target = onlineCheck;
+            } else {
+                // Use cache-only lookup to avoid blocking the main thread with a Mojang API call
+                target = Bukkit.getOfflinePlayerIfCached(targetName);
+            }
             if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
                 sender.sendMessage(plugin.getConfigManager().getMessage("player-not-found").replace("%player%", targetName));
                 return true;

@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class GuiListener implements Listener {
@@ -18,6 +20,23 @@ public class GuiListener implements Listener {
 
     public GuiListener(NaturalSkill plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onInventoryDrag(InventoryDragEvent event) {
+        // Cancel any drag action inside plugin GUIs to prevent item exploit tricks
+        if (event.getInventory().getHolder() instanceof SkillInventoryHolder) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        // Clean up the temporary cost edit map when a player closes the GUI (e.g. presses ESC or disconnects)
+        // This prevents memory leaks from the static activeCostEdits map in SkillGui
+        if (event.getInventory().getHolder() instanceof SkillInventoryHolder) {
+            SkillGui.clearCostEdit(event.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler
