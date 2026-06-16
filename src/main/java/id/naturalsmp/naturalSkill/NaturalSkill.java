@@ -73,7 +73,17 @@ public final class NaturalSkill extends JavaPlugin {
             leaderboardManager.updateLeaderboardsAsync();
         }, 6000L, 6000L); // every 5 minutes
 
-        getLogger().info("NaturalSkill has been enabled successfully!");
+        Bukkit.getConsoleSender().sendMessage(
+                id.naturalsmp.naturalSkill.config.ConfigManager.color(
+                    "\n" +
+                    "&a _   _       _                  _     &e____  _    _ _ _ \n" +
+                    "&a| \\ | | __ _| |_ _   _ _ __ __ _| |   &e/ ___|| | _(_| | |_\n" +
+                    "&a|  \\| |/ _` | __| | | | '__/ _` | |   &e\\___ \\| |/ / | | __|\n" +
+                    "&a| |\\  | (_| | |_| |_| | | | (_| | |    &e___) |   <| | | |_ \n" +
+                    "&a|_| \\_|\\__,_|\\__|\\__,_|_|  \\__,_|_|   &e|____/|_|\\_\\_|_|\\__|\n" +
+                    "&f       >> &bNaturalSkills v" + getDescription().getVersion() + " &fEnabled! <<\n"
+                )
+        );
     }
 
     @Override

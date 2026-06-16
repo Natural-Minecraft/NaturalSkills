@@ -78,7 +78,7 @@ public class EffectEngine {
         }
         // 6. Vault: [vault] give 100
         else if (lower.startsWith("[vault]")) {
-            if (!plugin.getHookManager().isEconomyEnabled()) {
+            if (Bukkit.getPluginManager().getPlugin("Vault") == null || !id.naturalsmp.naturalSkill.hooks.VaultHook.hasEconomy()) {
                 plugin.getLogger().warning("Tried to execute [vault] effect but Vault is not loaded!");
                 return;
             }
@@ -89,9 +89,9 @@ public class EffectEngine {
                 try {
                     double amount = Double.parseDouble(parts[1]);
                     if (action.equals("give")) {
-                        plugin.getHookManager().getEconomy().depositPlayer(player, amount);
+                        id.naturalsmp.naturalSkill.hooks.VaultHook.deposit(player, amount);
                     } else if (action.equals("take")) {
-                        plugin.getHookManager().getEconomy().withdrawPlayer(player, amount);
+                        id.naturalsmp.naturalSkill.hooks.VaultHook.withdraw(player, amount);
                     }
                 } catch (NumberFormatException e) {
                     plugin.getLogger().warning("Invalid amount for [vault] effect: " + parts[1]);

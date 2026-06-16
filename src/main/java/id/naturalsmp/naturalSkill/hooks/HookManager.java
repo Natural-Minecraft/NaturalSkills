@@ -1,11 +1,9 @@
 package id.naturalsmp.naturalSkill.hooks;
 
 import id.naturalsmp.naturalSkill.NaturalSkill;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -13,7 +11,6 @@ import java.util.logging.Level;
 public class HookManager {
 
     private final NaturalSkill plugin;
-    private Economy economy = null;
     private boolean mmoItemsEnabled = false;
     private boolean mcMMOEnabled = false;
 
@@ -26,9 +23,7 @@ public class HookManager {
 
     private void setupEconomy() {
         if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
-            RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
-            if (rsp != null) {
-                economy = rsp.getProvider();
+            if (VaultHook.setup()) {
                 plugin.getLogger().info("Successfully hooked into Vault Economy!");
             }
         } else {
@@ -48,14 +43,6 @@ public class HookManager {
             mcMMOEnabled = true;
             plugin.getLogger().info("Successfully hooked into mcMMO!");
         }
-    }
-
-    public Economy getEconomy() {
-        return economy;
-    }
-
-    public boolean isEconomyEnabled() {
-        return economy != null;
     }
 
     public boolean isMMOItemsEnabled() {
