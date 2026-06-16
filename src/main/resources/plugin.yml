@@ -16,4 +16,3 @@ commands:
   nskill:
     description: Perintah admin NaturalSkill.
     aliases: [naturalskill]
-
