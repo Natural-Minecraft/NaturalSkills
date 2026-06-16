@@ -1,7 +1,25 @@
-﻿# Changelog — NaturalSkill
+# Changelog — NaturalSkill
 
 Semua perubahan penting pada plugin ini didokumentasikan di sini.
 Format berdasarkan [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+## [1.1.0] — 2026-06-17
+
+### Added
+- **Integrasi PlaceholderAPI & PAPI Expansion**:
+  - Ditambahkan placeholder `%nskills_points%` (skill points yang dimiliki).
+  - Ditambahkan placeholder `%nskills_unlocked_count%` (jumlah cabang skill yang dibuka).
+  - Ditambahkan placeholder `%nskills_iq%`, `%nskills_strength%`, `%nskills_agility%`, `%nskills_psychology%`, `%nskills_communication%` (skor per kategori).
+  - Nilai IQ dihitung dari Base IQ 100 + akumulasi poin biaya skill yang telah dibuka pada kategori Intelligence.
+- **Sistem Leaderboard & Ranking (Anti-Lag)**:
+  - Kelas `LeaderboardManager` untuk memuat data semua pemain secara asinkron dari folder `playerdata` pada saat startup, dan memperbaruinya setiap 5 menit secara berkala.
+  - Pembaruan skor leaderboard aktif dilakukan secara instan di memori (real-time) begitu ada pemain yang membuka skill baru.
+  - Ditambahkan placeholder rank pemain: `%nskills_<kategori>_top_me%` (mengembalikan angka peringkat pemain tersebut, misal "25", atau "-" jika belum terperingkat).
+  - Ditambahkan placeholder leaderboard top: `%nskills_<kategori>_top_<1-10>%` (format `Nama (Skor)`), `%nskills_<kategori>_top_<1-10>_name%` (hanya nama), dan `%nskills_<kategori>_top_<1-10>_value%` (hanya skor).
+  
+### Changed
+- `PlayerData` dan `PlayerManager` sekarang menyimpan nama terakhir pemain online (`name` di file `<uuid>.yml`) untuk mencegah lookup `getOfflinePlayer` yang blocking saat menyusun data leaderboard.
+- `paper-plugin.yml` dan `pom.xml` ditambahkan dependensi soft-depend ke `PlaceholderAPI`.
 
 ---
 
