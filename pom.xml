@@ -17,6 +17,7 @@
     </properties>
 
     <build>
+        <finalName>NaturalSkills</finalName>
         <defaultGoal>clean package</defaultGoal>
         <plugins>
             <plugin>
