@@ -1,0 +1,26 @@
+# NaturalSkill Messages (Indonesian)
+
+prefix: "&a&l[NaturalSkill] &r"
+no-permission: "&cKamu tidak memiliki izin untuk menggunakan perintah ini!"
+player-only: "&cPerintah ini hanya dapat dijalankan oleh pemain in-game!"
+player-not-found: "&cPlayer %player% tidak ditemukan!"
+invalid-number: "&cJumlah poin harus berupa angka positif yang valid!"
+
+# Admin commands messages
+points-given: "&fBerhasil memberikan &e%amount% Skill Points &fkepada &a%player%&f. (Total: &e%total%&f)"
+points-taken: "&fBerhasil mengambil &e%amount% Skill Points &fdari &a%player%&f. (Sisa: &e%total%&f)"
+points-set: "&fBerhasil mengatur Skill Points &a%player% &fmenjadi &e%amount%&f."
+reload: "&aKonfigurasi dan pesan berhasil dimuat ulang!"
+
+# Player messages
+points-check: "&fKamu memiliki &e%amount% Skill Points&f."
+skill-unlocked: "&aKamu berhasil membuka cabang skill &e%skill%&a!"
+skill-already-unlocked: "&cKamu sudah membuka cabang skill ini!"
+prerequisite-missing: "&cKamu harus membuka skill &e%prerequisite% &cterlebih dahulu!"
+not-enough-points: "&cSkill Points kamu tidak cukup! Dibutuhkan &e%cost% SP &c(Milikmu: &e%points% SP&c)."
+gui-locked-status: "&cTerkunci"
+gui-unlocked-status: "&aTerbuka"
+gui-purchasable-status: "&eDapat Dibeli"
+gui-title-main: "&0Pohon Skill"
+gui-title-category: "&0Skill: %category%"
+gui-title-admin: "&0Admin Editor: %category%"

@@ -1,0 +1,187 @@
+# NaturalSkill Configuration
+# All configurations for categories, branches, and custom effects.
+
+# Material to use for decoration in GUIs
+gui:
+  decorations:
+    filler:
+      material: "GRAY_STAINED_GLASS_PANE"
+      name: " "
+    back_button:
+      material: "ARROW"
+      name: "&cBack to Categories"
+      slot: 49
+
+# The 5 default categories. Admin can add new ones here.
+# Main menu layout slots (0-53):
+# 11: Intelligence, 13: Strength, 15: Agility, 29: Psychology, 33: Communication
+categories:
+  intelligence:
+    name: "&b&lIntelligence"
+    icon: "BOOK"
+    slot: 11
+    lore:
+      - "&7Meningkatkan kapasitas berpikir,"
+      - "&7logika, dan pemahaman Anda."
+      - ""
+      - "&eKlik untuk membuka cabang skill!"
+    branches:
+      iq_1:
+        name: "&eIQ I"
+        icon: "ENCHANTED_BOOK"
+        slot: 20
+        cost: 10
+        lore:
+          - "&7Meningkatkan kecerdasan intelektual."
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[console] give %player% diamond 5"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &eIQ I&f! Kamu mendapatkan &b5 Diamond&f!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"
+      iq_2:
+        name: "&eIQ II"
+        icon: "ENCHANTED_BOOK"
+        slot: 21
+        cost: 25
+        prerequisite: "iq_1"
+        lore:
+          - "&7Meningkatkan kecerdasan intelektual lebih lanjut."
+          - "&7Membutuhkan: &6IQ I"
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[console] effect give %player% night_vision infinite 0 true"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &eIQ II&f! Kamu mendapatkan efek &eNight Vision&f!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"
+      eq_1:
+        name: "&dEQ I"
+        icon: "WRITABLE_BOOK"
+        slot: 23
+        cost: 12
+        lore:
+          - "&7Mengendalikan emosi dan interaksi."
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[vault] give 1000"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &dEQ I&f! Kamu mendapatkan &a$1,000&f!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"
+
+  strength:
+    name: "&c&lStrength"
+    icon: "IRON_SWORD"
+    slot: 13
+    lore:
+      - "&7Meningkatkan kekuatan fisik,"
+      - "&7daya tahan, dan daya serang."
+      - ""
+      - "&eKlik untuk membuka cabang skill!"
+    branches:
+      power_1:
+        name: "&cPower I"
+        icon: "STONE_SWORD"
+        slot: 20
+        cost: 15
+        lore:
+          - "&7Meningkatkan daya serang fisik."
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[console] effect give %player% strength 600 0 true"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &cPower I&f! Kamu mendapatkan efek &cStrength I &fselama 10 menit!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"
+      durability_1:
+        name: "&6Durability I"
+        icon: "IRON_CHESTPLATE"
+        slot: 22
+        cost: 15
+        lore:
+          - "&7Meningkatkan daya tahan tubuh."
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[console] effect give %player% resistance 600 0 true"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &6Durability I&f! Kamu mendapatkan efek &9Resistance I &fselama 10 menit!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"
+
+  agility:
+    name: "&a&lAgility"
+    icon: "FEATHER"
+    slot: 15
+    lore:
+      - "&7Meningkatkan kelincahan, kecepatan,"
+      - "&7dan refleks Anda."
+      - ""
+      - "&eKlik untuk membuka cabang skill!"
+    branches:
+      speed_1:
+        name: "&aSpeed I"
+        icon: "LEATHER_BOOTS"
+        slot: 20
+        cost: 10
+        lore:
+          - "&7Meningkatkan kecepatan lari."
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[console] effect give %player% speed 600 0 true"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &aSpeed I&f! Kecepatan Anda meningkat!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"
+
+  psychology:
+    name: "&5&lPsychology"
+    icon: "BREWING_STAND"
+    slot: 29
+    lore:
+      - "&7Meningkatkan ketahanan mental,"
+      - "&7fokus, dan kontrol pikiran."
+      - ""
+      - "&eKlik untuk membuka cabang skill!"
+    branches:
+      focus_1:
+        name: "&5Focus I"
+        icon: "ENDER_EYE"
+        slot: 22
+        cost: 20
+        lore:
+          - "&7Meningkatkan fokus mental."
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[mcmmo] addxp herbalism 1000"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &5Focus I&f! McMMO Herbalism XP bertambah &d1000&f!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"
+
+  communication:
+    name: "&e&lCommunication"
+    icon: "WRITTEN_BOOK"
+    slot: 33
+    lore:
+      - "&7Meningkatkan karisma dan"
+      - "&7kemampuan bernegosiasi."
+      - ""
+      - "&eKlik untuk membuka cabang skill!"
+    branches:
+      charisma_1:
+        name: "&eCharisma I"
+        icon: "GOLDEN_CARROT"
+        slot: 22
+        cost: 15
+        lore:
+          - "&7Meningkatkan daya tarik sosial."
+          - ""
+          - "&7Biaya: &e%cost% Skill Points"
+          - "&7Status: %status%"
+        effects:
+          - "[vault] give 500"
+          - "[mmoitems] give %player% SWORD EXCALIBUR 1"
+          - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &eCharisma I&f! Kamu mendapatkan &a$500 &fdan item custom &eExcalibur&f!"
+          - "[sound] ENTITY_PLAYER_LEVELUP"

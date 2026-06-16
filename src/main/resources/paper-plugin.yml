@@ -1,0 +1,18 @@
+name: NaturalSkill
+version: '1.0-SNAPSHOT'
+main: id.naturalsmp.naturalSkill.NaturalSkill
+api-version: '1.21'
+
+softdepend:
+  - Vault
+  - MMOItems
+  - mcMMO
+
+commands:
+  skill:
+    description: Membuka menu pohon skill.
+    aliases: [skills]
+  nskill:
+    description: Perintah admin NaturalSkill.
+    aliases: [naturalskill]
+

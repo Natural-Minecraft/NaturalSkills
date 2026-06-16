@@ -1,0 +1,106 @@
+package id.naturalsmp.naturalSkill.listeners;
+
+import id.naturalsmp.naturalSkill.NaturalSkill;
+import id.naturalsmp.naturalSkill.gui.SkillGui;
+import id.naturalsmp.naturalSkill.gui.SkillInventoryHolder;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+public class GuiListener implements Listener {
+
+    private final NaturalSkill plugin;
+
+    public GuiListener(NaturalSkill plugin) {
+        this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (!(event.getInventory().getHolder() instanceof SkillInventoryHolder)) return;
+
+        event.setCancelled(true); // Prevent item stealing / moving
+
+        Player player = (Player) event.getWhoClicked();
+        SkillInventoryHolder holder = (SkillInventoryHolder) event.getInventory().getHolder();
+        int slot = event.getRawSlot();
+
+        // Click outside inventory bounds
+        if (slot < 0 || slot >= event.getInventory().getSize()) return;
+
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
+
+        SkillGui gui = new SkillGui(plugin, player);
+        String menuType = holder.getMenuType();
+        FileConfiguration config = plugin.getConfigManager().getConfig();
+
+        if (menuType.equals("main")) {
+            // Main menu: click category
+            ConfigurationSection categories = config.getConfigurationSection("categories");
+            if (categories != null) {
+                for (String catId : categories.getKeys(false)) {
+                    if (categories.getInt(catId + ".slot") == slot) {
+                        gui.openCategoryMenu(catId);
+                        return;
+                    }
+                }
+            }
+        } else if (menuType.equals("category")) {
+            String catId = holder.getCategoryId();
+            // Category menu: click branch or back button (slot 49)
+            if (slot == 49) {
+                gui.openMainMenu();
+                return;
+            }
+
+            ConfigurationSection branches = config.getConfigurationSection("categories." + catId + ".branches");
+            if (branches != null) {
+                for (String branchId : branches.getKeys(false)) {
+                    if (branches.getInt(branchId + ".slot") == slot) {
+                        gui.purchaseSkill(catId, branchId);
+                        return;
+                    }
+                }
+            }
+        } else if (menuType.equals("admin_main")) {
+            // Admin main menu: click category
+            ConfigurationSection categories = config.getConfigurationSection("categories");
+            if (categories != null) {
+                for (String catId : categories.getKeys(false)) {
+                    if (categories.getInt(catId + ".slot") == slot) {
+                        gui.openAdminCategoryMenu(catId);
+                        return;
+                    }
+                }
+            }
+        } else if (menuType.equals("admin_category")) {
+            String catId = holder.getCategoryId();
+            // Admin category menu: click branch or back button (slot 49)
+            if (slot == 49) {
+                gui.openAdminMenu();
+                return;
+            }
+
+            ConfigurationSection branches = config.getConfigurationSection("categories." + catId + ".branches");
+            if (branches != null) {
+                for (String branchId : branches.getKeys(false)) {
+                    if (branches.getInt(branchId + ".slot") == slot) {
+                        gui.openAdminCostEditorMenu(catId, branchId);
+                        return;
+                    }
+                }
+            }
+        } else if (menuType.equals("admin_cost_edit")) {
+            String catId = holder.getCategoryId();
+            String branchId = holder.getBranchId();
+            gui.handleAdminCostClick(catId, branchId, slot);
+        }
+    }
+}
