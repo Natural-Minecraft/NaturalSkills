@@ -60,6 +60,9 @@ public class SkillGui {
                     case "category":
                         openCategoryMenu(holder.getCategoryId());
                         break;
+                    case "bakat":
+                        openBakatMenu();
+                        break;
                     case "admin_main":
                         openAdminMenu();
                         break;
@@ -85,10 +88,17 @@ public class SkillGui {
 
         fillDecorations(inv);
 
-        // Player Info Book in slot 4
-        inv.setItem(4, createItem(Material.BOOK, "&e&lStatistik Poin", Arrays.asList(
+        // Player Info Book in slot 4 - shows levels as well
+        inv.setItem(4, createItem(Material.BOOK, "&e&lStatistik Poin & Keahlian", Arrays.asList(
                 "&7Pemain: &a" + player.getName(),
-                "&7Skill Points: &e" + playerData.getPoints() + " SP"
+                "&7Skill Points: &e" + playerData.getPoints() + " SP",
+                "",
+                "&a&lLevel Keahlian Utama:",
+                "&7- Strength: &eLvl " + playerData.getSkillLevel("strength"),
+                "&7- Agility: &eLvl " + playerData.getSkillLevel("agility"),
+                "&7- Intelligence: &eLvl " + playerData.getSkillLevel("intelligence"),
+                "&7- Psychology: &eLvl " + playerData.getSkillLevel("psychology"),
+                "&7- Communication: &eLvl " + playerData.getSkillLevel("communication")
         )));
 
         // Load categories
@@ -105,6 +115,21 @@ public class SkillGui {
                 inv.setItem(slot, createItem(material, name, lore));
             }
         }
+
+        // Bakat Button in slot 31
+        String bakatMat = config.getString("gui.decorations.bakat_button.material", "GOLDEN_HOE");
+        String bakatName = config.getString("gui.decorations.bakat_button.name", "&6&lKeahlian Bakat &7[Klik]");
+        List<String> bakatLore = config.getStringList("gui.decorations.bakat_button.lore");
+        if (bakatLore == null || bakatLore.isEmpty()) {
+            bakatLore = Arrays.asList(
+                    "&7Bakat khusus yang didapat dari",
+                    "&7kegiatan sehari-hari (Tebang Kayu,",
+                    "&7Menambang, Berenang, Memancing, dll).",
+                    "",
+                    "&eKlik untuk melihat perkembangan bakat!"
+            );
+        }
+        inv.setItem(31, createItem(getMaterial(bakatMat, Material.GOLDEN_HOE), bakatName, bakatLore));
 
         player.openInventory(inv);
     }
@@ -455,5 +480,78 @@ public class SkillGui {
             plugin.getLogger().warning("Invalid material name in config: " + name + ". Falling back to " + fallback.name());
             return fallback;
         }
+    }
+
+    /**
+     * Player Bakat Submenu
+     */
+    public void openBakatMenu() {
+        FileConfiguration config = plugin.getConfigManager().getConfig();
+        String title = ConfigManager.color(config.getString("gui.bakat-title", "&0Bakat Pemain"));
+
+        SkillInventoryHolder holder = new SkillInventoryHolder("bakat", null, null);
+        Inventory inv = Bukkit.createInventory(holder, 54, title);
+        holder.setInventory(inv);
+
+        fillDecorations(inv);
+
+        // Player stats in slot 4
+        inv.setItem(4, createItem(Material.BOOK, "&e&lStatistik Bakat Pemain", Arrays.asList(
+                "&7Pemain: &a" + player.getName(),
+                "&7Tebang Pohon: &eLvl " + playerData.getBakatLevel("woodcutting"),
+                "&7Nambang: &eLvl " + playerData.getBakatLevel("mining"),
+                "&7Bertani: &eLvl " + playerData.getBakatLevel("farming"),
+                "&7Memancing: &eLvl " + playerData.getBakatLevel("fishing"),
+                "&7Berenang: &eLvl " + playerData.getBakatLevel("swimming")
+        )));
+
+        // Load bakat configurations
+        ConfigurationSection bakatSec = config.getConfigurationSection("progression.bakat");
+        if (bakatSec != null) {
+            for (String key : bakatSec.getKeys(false)) {
+                String name = bakatSec.getString(key + ".name", key);
+                String materialName = bakatSec.getString(key + ".icon", "IRON_PICKAXE");
+                Material material = getMaterial(materialName, Material.IRON_PICKAXE);
+                int slot = bakatSec.getInt(key + ".slot", 22);
+
+                int level = playerData.getBakatLevel(key);
+                double xp = playerData.getBakatXp(key);
+                int reqXp = plugin.getProgressionManager().getRequiredXp(level);
+                int maxLevel = config.getInt("progression.max-level", 50);
+
+                double percent = (double) xp / reqXp * 100.0;
+                String percentStr = String.format(Locale.US, "%.1f", percent);
+
+                // Progress Bar (10 characters)
+                String progressBar = getProgressBar((int) xp, reqXp, 10, '■', "&a", "&7");
+
+                List<String> rawLore = bakatSec.getStringList(key + ".lore");
+                List<String> formattedLore = new ArrayList<>();
+                for (String line : rawLore) {
+                    formattedLore.add(line
+                            .replace("%level%", String.valueOf(level))
+                            .replace("%max_level%", String.valueOf(maxLevel))
+                            .replace("%xp%", String.format(Locale.US, "%.1f", xp))
+                            .replace("%req_xp%", String.valueOf(reqXp))
+                            .replace("%percent%", percentStr)
+                            .replace("%progress_bar%", progressBar));
+                }
+
+                inv.setItem(slot, createItem(material, name, formattedLore));
+            }
+        }
+
+        // Back button in slot 49
+        inv.setItem(49, getBackButton());
+
+        player.openInventory(inv);
+    }
+
+    private String getProgressBar(int currentXp, int reqXp, int barLength, char symbol, String activeColor, String inactiveColor) {
+        if (reqXp <= 0) return activeColor + String.valueOf(symbol).repeat(barLength);
+        double percent = Math.min(1.0, (double) currentXp / reqXp);
+        int activeCount = (int) (percent * barLength);
+        int inactiveCount = barLength - activeCount;
+        return activeColor + String.valueOf(symbol).repeat(activeCount) + inactiveColor + String.valueOf(symbol).repeat(inactiveCount);
     }
 }

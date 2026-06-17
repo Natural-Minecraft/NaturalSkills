@@ -185,3 +185,226 @@ categories:
           - "[mmoitems] SWORD EXCALIBUR 1"
           - "[message] &a&l[NaturalSkill] &fKamu berhasil membuka &eCharisma I&f! Kamu mendapatkan &a$500 &fdan item custom &eExcalibur&f!"
           - "[sound] ENTITY_PLAYER_LEVELUP"
+
+# ========================================================
+# Sistem Progresi & Bakat (AuraSkills Style) Configuration
+# ========================================================
+
+gui:
+  decorations:
+    bakat_button:
+      material: "GOLDEN_HOE"
+      name: "&6&lKeahlian Bakat &7[Klik]"
+      slot: 31
+      lore:
+        - "&7Bakat khusus yang didapat dari"
+        - "&7kegiatan sehari-hari (Tebang Kayu,"
+        - "&7Menambang, Berenang, Memancing, dll)."
+        - ""
+        - "&eKlik untuk melihat perkembangan bakat!"
+  bakat-title: "&0Bakat Pemain"
+
+progression:
+  max-level: 50
+  points-per-level: 1
+  xp-curve:
+    base: 100.0
+    multiplier: 50.0
+    exponent: 1.8
+
+  # Main Skill categories scaling passive attributes
+  skills:
+    strength:
+      name: "Strength"
+      effects:
+        per_level:
+          damage_percent: 0.005 # +0.5% damage per level
+          damage_flat: 0.1 # +0.1 flat damage per level
+        levels:
+          10:
+            attributes:
+              GENERIC_MAX_HEALTH: 4.0 # +2 hearts (1 heart = 2.0 health)
+            message: "&6&l[Level Up] &aStrength Level 10: &fMendapatkan &e+2 Max Hearts&f!"
+          20:
+            attributes:
+              GENERIC_MAX_HEALTH: 8.0 # +4 hearts
+            message: "&6&l[Level Up] &aStrength Level 20: &fMendapatkan &e+4 Max Hearts&f!"
+          30:
+            attributes:
+              GENERIC_MAX_HEALTH: 12.0 # +6 hearts
+            message: "&6&l[Level Up] &aStrength Level 30: &fMendapatkan &e+6 Max Hearts&f!"
+          40:
+            attributes:
+              GENERIC_MAX_HEALTH: 16.0 # +8 hearts
+            message: "&6&l[Level Up] &aStrength Level 40: &fMendapatkan &e+8 Max Hearts&f!"
+          50:
+            attributes:
+              GENERIC_MAX_HEALTH: 20.0 # +10 hearts
+            message: "&6&l[Level Up] &aStrength Level 50: &fMendapatkan &e+10 Max Hearts&f!"
+    agility:
+      name: "Agility"
+      effects:
+        per_level:
+          GENERIC_MOVEMENT_SPEED: 0.001 # +0.1% movement speed per level
+    intelligence:
+      name: "Intelligence"
+    psychology:
+      name: "Psychology"
+    communication:
+      name: "Communication"
+
+  # Bakat (Talent) definitions
+  bakat:
+    woodcutting:
+      name: "&a&lPenebang Pohon (Woodcutting)"
+      icon: "IRON_AXE"
+      slot: 20
+      lore:
+        - "&7Meningkatkan keahlian menebang pohon."
+        - "&7Level: &e%level% &7/ &e%max_level%"
+        - "&7Progress: &b%xp% &7/ &b%req_xp% XP &7(%percent%%)"
+        - "&7%progress_bar%"
+        - ""
+        - "&eSumber XP:"
+        - "&7- Oak/Spruce/Birch Logs: &a+5.0 XP"
+        - "&7- Jungle/Acacia/Dark Oak Logs: &a+6.0 XP"
+        - ""
+        - "&aEfek Pasif:"
+        - "&7- Peluang Double Logs: &e%level% x 0.5% &7(Saat ini: &e%percent%%&7)"
+    mining:
+      name: "&e&lPenambang (Mining)"
+      icon: "IRON_PICKAXE"
+      slot: 21
+      lore:
+        - "&7Meningkatkan keahlian menambang bijih & batu."
+        - "&7Level: &e%level% &7/ &e%max_level%"
+        - "&7Progress: &b%xp% &7/ &b%req_xp% XP &7(%percent%%)"
+        - "&7%progress_bar%"
+        - ""
+        - "&eSumber XP:"
+        - "&7- Batu (Stone/Deepslate): &a+1.5 XP"
+        - "&7- Besi / Emas Ore: &a+8.0 XP"
+        - "&7- Berlian / Emerald Ore: &a+25.0 XP"
+        - ""
+        - "&aEfek Pasif:"
+        - "&7- Peluang Double Ores: &e%level% x 0.5% &7(Saat ini: &e%percent%%&7)"
+    farming:
+      name: "&6&lPetani (Farming)"
+      icon: "IRON_HOE"
+      slot: 22
+      lore:
+        - "&7Meningkatkan keahlian memanen tanaman."
+        - "&7Level: &e%level% &7/ &e%max_level%"
+        - "&7Progress: &b%xp% &7/ &b%req_xp% XP &7(%percent%%)"
+        - "&7%progress_bar%"
+        - ""
+        - "&eSumber XP:"
+        - "&7- Gandum / Wortel / Kentang: &a+4.0 XP"
+        - "&7- Semangka / Labu: &a+5.0 XP"
+        - ""
+        - "&aEfek Pasif:"
+        - "&7- Peluang Double Panenan: &e%level% x 0.5% &7(Saat ini: &e%percent%%&7)"
+    fishing:
+      name: "&b&lPemancing (Fishing)"
+      icon: "FISHING_ROD"
+      slot: 23
+      lore:
+        - "&7Meningkatkan keahlian memancing ikan."
+        - "&7Level: &e%level% &7/ &e%max_level%"
+        - "&7Progress: &b%xp% &7/ &b%req_xp% XP &7(%percent%%)"
+        - "&7%progress_bar%"
+        - ""
+        - "&eSumber XP:"
+        - "&7- Berhasil Menangkap Ikan: &a+25.0 XP"
+        - ""
+        - "&aEfek Pasif:"
+        - "&7- Peluang Double Catch: &e%level% x 0.5% &7(Saat ini: &e%percent%%&7)"
+    swimming:
+      name: "&d&lPerenang (Swimming)"
+      icon: "PRISMARINE_SHARD"
+      slot: 24
+      lore:
+        - "&7Meningkatkan kecepatan berenang."
+        - "&7Level: &e%level% &7/ &e%max_level%"
+        - "&7Progress: &b%xp% &7/ &b%req_xp% XP &7(%percent%%)"
+        - "&7%progress_bar%"
+        - ""
+        - "&eSumber XP:"
+        - "&7- Berenang Aktif di Air: &a+2.0 XP/detik"
+        - ""
+        - "&aEfek Pasif:"
+        - "&7- Tambahan Speed Berenang: &e%level% x 0.1% &7(Saat ini: &e%percent%%&7)"
+
+  # XP Sources Definitions used by listener
+  xp_sources:
+    mining:
+      blocks:
+        stone: 1.5
+        cobblestone: 1.0
+        deepslate: 1.8
+        deepslate_cobblestone: 1.2
+        coal_ore: 5.0
+        deepslate_coal_ore: 5.0
+        copper_ore: 6.0
+        deepslate_copper_ore: 6.0
+        iron_ore: 8.0
+        deepslate_iron_ore: 8.0
+        gold_ore: 12.0
+        deepslate_gold_ore: 12.0
+        lapis_ore: 10.0
+        deepslate_lapis_ore: 10.0
+        redstone_ore: 10.0
+        deepslate_redstone_ore: 10.0
+        diamond_ore: 25.0
+        deepslate_diamond_ore: 25.0
+        emerald_ore: 35.0
+        deepslate_emerald_ore: 35.0
+        nether_quartz_ore: 8.0
+        nether_gold_ore: 6.0
+        ancient_debris: 50.0
+    woodcutting:
+      blocks:
+        oak_log: 5.0
+        spruce_log: 5.0
+        birch_log: 5.0
+        jungle_log: 6.0
+        acacia_log: 6.0
+        dark_oak_log: 6.0
+        mangrove_log: 6.5
+        cherry_log: 6.5
+        oak_wood: 5.0
+        spruce_wood: 5.0
+        birch_wood: 5.0
+        jungle_wood: 6.0
+        acacia_wood: 6.0
+        dark_oak_wood: 6.0
+        mangrove_wood: 6.5
+        cherry_wood: 6.5
+    farming:
+      crops:
+        wheat: 4.0
+        carrots: 4.0
+        potatoes: 4.0
+        beetroots: 4.0
+        melon: 5.0
+        pumpkin: 5.0
+        sugar_cane: 3.0
+        cocoa: 5.0
+        nether_wart: 6.0
+    fishing:
+      caught_fish: 25.0
+    swimming:
+      xp_per_second: 2.0
+    agility:
+      xp_per_second: 1.5
+    strength:
+      damage_dealt_scale: 1.2
+    intelligence:
+      enchant_level_multiplier: 12.0
+      potion_brewed: 15.0
+    psychology:
+      eat_food_multiplier: 4.0
+    communication:
+      chat: 3.0
+      chat_cooldown_ms: 10000
+      trade: 10.0

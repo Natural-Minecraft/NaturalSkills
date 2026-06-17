@@ -24,3 +24,8 @@ gui-purchasable-status: "&eDapat Dibeli"
 gui-title-main: "&0Pohon Skill"
 gui-title-category: "&0Skill: %category%"
 gui-title-admin: "&0Admin Editor: %category%"
+
+# Progression messaging
+xp-gained-actionbar: "&b+%amount% XP &7(%name%) &a[%xp%/%req_xp% XP]"
+level-up-title: "&a&lLEVEL UP!"
+level-up-subtitle: "&fKeahlian &d%name% &fnaik ke &eLevel %level%&f!"

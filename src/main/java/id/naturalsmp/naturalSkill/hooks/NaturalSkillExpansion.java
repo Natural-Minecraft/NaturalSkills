@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
 public class NaturalSkillExpansion extends PlaceholderExpansion {
 
@@ -120,6 +121,34 @@ public class NaturalSkillExpansion extends PlaceholderExpansion {
         }
         if (lower.equalsIgnoreCase("communication")) {
             return String.valueOf(plugin.getLeaderboardManager().calculateScore(data.getUnlockedSkills(), "communication"));
+        }
+
+        // New Progression Placeholders
+        if (lower.startsWith("level_")) {
+            String skill = lower.substring("level_".length());
+            return String.valueOf(data.getSkillLevel(skill));
+        }
+        if (lower.startsWith("xp_")) {
+            String skill = lower.substring("xp_".length());
+            return String.format(Locale.US, "%.1f", data.getSkillXp(skill));
+        }
+        if (lower.startsWith("reqxp_")) {
+            String skill = lower.substring("reqxp_".length());
+            int lvl = data.getSkillLevel(skill);
+            return String.valueOf(plugin.getProgressionManager().getRequiredXp(lvl));
+        }
+        if (lower.startsWith("bakat_level_")) {
+            String bakat = lower.substring("bakat_level_".length());
+            return String.valueOf(data.getBakatLevel(bakat));
+        }
+        if (lower.startsWith("bakat_xp_")) {
+            String bakat = lower.substring("bakat_xp_".length());
+            return String.format(Locale.US, "%.1f", data.getBakatXp(bakat));
+        }
+        if (lower.startsWith("bakat_reqxp_")) {
+            String bakat = lower.substring("bakat_reqxp_".length());
+            int lvl = data.getBakatLevel(bakat);
+            return String.valueOf(plugin.getProgressionManager().getRequiredXp(lvl));
         }
 
         return null;

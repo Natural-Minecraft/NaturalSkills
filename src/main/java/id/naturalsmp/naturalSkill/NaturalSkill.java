@@ -20,6 +20,8 @@ public final class NaturalSkill extends JavaPlugin {
     private PlayerManager playerManager;
     private EffectEngine effectEngine;
     private id.naturalsmp.naturalSkill.data.LeaderboardManager leaderboardManager;
+    private id.naturalsmp.naturalSkill.progression.ProgressionManager progressionManager;
+    private id.naturalsmp.naturalSkill.listeners.ProgressionListener progressionListener;
 
     private final java.util.Map<String, String> skillCategoryMap = new java.util.HashMap<>();
     private final java.util.Map<String, Integer> skillCostMap = new java.util.HashMap<>();
@@ -29,6 +31,9 @@ public final class NaturalSkill extends JavaPlugin {
         // 1. Initialize Configuration
         this.configManager = new ConfigManager(this);
         loadSkillConfigMapping();
+
+        // 1.5 Initialize ProgressionManager (MUST be before PlayerManager loads online players)
+        this.progressionManager = new id.naturalsmp.naturalSkill.progression.ProgressionManager(this);
 
         // 2. Initialize HookManager (Vault, MMOItems, mcMMO)
         this.hookManager = new HookManager(this);
@@ -45,6 +50,8 @@ public final class NaturalSkill extends JavaPlugin {
         // 5. Register Listeners
         Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
         Bukkit.getPluginManager().registerEvents(new GuiListener(this), this);
+        this.progressionListener = new id.naturalsmp.naturalSkill.listeners.ProgressionListener(this);
+        Bukkit.getPluginManager().registerEvents(this.progressionListener, this);
 
         // 6. Register Commands and Tab Completers
         SkillCommand skillCommand = new SkillCommand(this);
@@ -89,6 +96,10 @@ public final class NaturalSkill extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        // Stop progression listener tasks
+        if (progressionListener != null) {
+            progressionListener.cancelTask();
+        }
         // Save all cached player data on disable
         if (playerManager != null) {
             playerManager.saveAll();
@@ -142,6 +153,10 @@ public final class NaturalSkill extends JavaPlugin {
 
     public id.naturalsmp.naturalSkill.data.LeaderboardManager getLeaderboardManager() {
         return leaderboardManager;
+    }
+
+    public id.naturalsmp.naturalSkill.progression.ProgressionManager getProgressionManager() {
+        return progressionManager;
     }
 
     public java.util.Map<String, String> getSkillCategoryMap() {

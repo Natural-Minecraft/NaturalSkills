@@ -1,6 +1,8 @@
 package id.naturalsmp.naturalSkill.data;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +12,14 @@ public class PlayerData {
     private int points;
     private final Set<String> unlockedSkills;
     private String name = "";
+
+    // Skills level & XP
+    private final Map<String, Integer> skillLevels = new HashMap<>();
+    private final Map<String, Double> skillXp = new HashMap<>();
+
+    // Bakat level & XP
+    private final Map<String, Integer> bakatLevels = new HashMap<>();
+    private final Map<String, Double> bakatXp = new HashMap<>();
 
     public PlayerData(UUID uuid) {
         this.uuid = uuid;
@@ -79,5 +89,55 @@ public class PlayerData {
 
     public void lockSkill(String skillId) {
         unlockedSkills.remove(skillId.toLowerCase());
+    }
+
+    // Skills Getters & Setters
+    public int getSkillLevel(String skillId) {
+        return skillLevels.getOrDefault(skillId.toLowerCase(), 1);
+    }
+
+    public void setSkillLevel(String skillId, int level) {
+        skillLevels.put(skillId.toLowerCase(), Math.max(1, level));
+    }
+
+    public double getSkillXp(String skillId) {
+        return skillXp.getOrDefault(skillId.toLowerCase(), 0.0);
+    }
+
+    public void setSkillXp(String skillId, double xp) {
+        skillXp.put(skillId.toLowerCase(), Math.max(0.0, xp));
+    }
+
+    public Map<String, Integer> getSkillLevels() {
+        return skillLevels;
+    }
+
+    public Map<String, Double> getSkillXpMap() {
+        return skillXp;
+    }
+
+    // Bakat Getters & Setters
+    public int getBakatLevel(String bakatId) {
+        return bakatLevels.getOrDefault(bakatId.toLowerCase(), 1);
+    }
+
+    public void setBakatLevel(String bakatId, int level) {
+        bakatLevels.put(bakatId.toLowerCase(), Math.max(1, level));
+    }
+
+    public double getBakatXp(String bakatId) {
+        return bakatXp.getOrDefault(bakatId.toLowerCase(), 0.0);
+    }
+
+    public void setBakatXp(String bakatId, double xp) {
+        bakatXp.put(bakatId.toLowerCase(), Math.max(0.0, xp));
+    }
+
+    public Map<String, Integer> getBakatLevels() {
+        return bakatLevels;
+    }
+
+    public Map<String, Double> getBakatXpMap() {
+        return bakatXp;
     }
 }

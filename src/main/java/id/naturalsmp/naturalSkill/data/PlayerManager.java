@@ -63,7 +63,36 @@ public class PlayerManager {
         }
 
         PlayerData data = new PlayerData(uuid, name, points, unlockedSet);
+
+        // Load skills levels & XP
+        if (config.contains("skills")) {
+            org.bukkit.configuration.ConfigurationSection skillsSec = config.getConfigurationSection("skills");
+            if (skillsSec != null) {
+                for (String key : skillsSec.getKeys(false)) {
+                    data.setSkillLevel(key, skillsSec.getInt(key + ".level", 1));
+                    data.setSkillXp(key, skillsSec.getDouble(key + ".xp", 0.0));
+                }
+            }
+        }
+        // Load bakat levels & XP
+        if (config.contains("bakat")) {
+            org.bukkit.configuration.ConfigurationSection bakatSec = config.getConfigurationSection("bakat");
+            if (bakatSec != null) {
+                for (String key : bakatSec.getKeys(false)) {
+                    data.setBakatLevel(key, bakatSec.getInt(key + ".level", 1));
+                    data.setBakatXp(key, bakatSec.getDouble(key + ".xp", 0.0));
+                }
+            }
+        }
+
         dataCache.put(uuid, data);
+
+        // Apply attributes to online player
+        org.bukkit.entity.Player online = org.bukkit.Bukkit.getPlayer(uuid);
+        if (online != null && plugin.getProgressionManager() != null) {
+            plugin.getProgressionManager().applyAttributes(online, data);
+        }
+
         return data;
     }
 
@@ -85,6 +114,22 @@ public class PlayerManager {
         config.set("name", data.getName());
         config.set("points", data.getPoints());
         config.set("unlocked_skills", new ArrayList<>(data.getUnlockedSkills()));
+
+        // Save skills levels & XP
+        for (Map.Entry<String, Integer> entry : data.getSkillLevels().entrySet()) {
+            config.set("skills." + entry.getKey() + ".level", entry.getValue());
+        }
+        for (Map.Entry<String, Double> entry : data.getSkillXpMap().entrySet()) {
+            config.set("skills." + entry.getKey() + ".xp", entry.getValue());
+        }
+
+        // Save bakat levels & XP
+        for (Map.Entry<String, Integer> entry : data.getBakatLevels().entrySet()) {
+            config.set("bakat." + entry.getKey() + ".level", entry.getValue());
+        }
+        for (Map.Entry<String, Double> entry : data.getBakatXpMap().entrySet()) {
+            config.set("bakat." + entry.getKey() + ".xp", entry.getValue());
+        }
 
         try {
             config.save(file);

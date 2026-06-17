@@ -61,6 +61,11 @@ public class GuiListener implements Listener {
         FileConfiguration config = plugin.getConfigManager().getConfig();
 
         if (menuType.equals("main")) {
+            // Check bakat button click
+            if (slot == 31) {
+                gui.openBakatMenu();
+                return;
+            }
             // Main menu: click category
             ConfigurationSection categories = config.getConfigurationSection("categories");
             if (categories != null) {
@@ -70,6 +75,12 @@ public class GuiListener implements Listener {
                         return;
                     }
                 }
+            }
+        } else if (menuType.equals("bakat")) {
+            // Bakat menu: click back button (slot 49)
+            if (slot == 49) {
+                gui.openMainMenu();
+                return;
             }
         } else if (menuType.equals("category")) {
             String catId = holder.getCategoryId();
