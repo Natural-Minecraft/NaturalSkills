@@ -75,13 +75,16 @@ public final class NaturalSkill extends JavaPlugin {
 
         Bukkit.getConsoleSender().sendMessage(
                 id.naturalsmp.naturalSkill.config.ConfigManager.color(
-                    "\n" +
+                    "\n&a===============\n" +
                     "&a _   _       _                  _     &e ____  _    _ _ _ \n" +
-                    "&a| \\ | | __ _| |_ _   _ _ __ __ _| |   &e/ ___|| | _(_) | |\n" +
-                    "&a|  \\| |/ _` | __| | | | '__/ _` | |   &e\\___ \\| |/ / | | |\n" +
-                    "&a| |\\  | (_| | |_| |_| | | | (_| | |    &e___) |   <| | | |\n" +
-                    "&a|_| \\_|\\__,_|\\__|\\__,_|_|  \\__,_|_|   &e|____/|_|\\_\\_|_|_|\n" +
-                    "&f       >> &bNaturalSkills v" + getDescription().getVersion() + " &fEnabled! <<\n"
+                    "&a| \ | | __ _| |_ _   _ _ __ __ _| |   &e/ ___|| | _(_) | |\n" +
+                    "&a|  \| |/ _` | __| | | | '__/ _` | |   &e\___ \| |/ / | | |\n" +
+                    "&a| |\  | (_| | |_| |_| | | | (_| | |    &e___) |   <| | | |\n" +
+                    "&a|_| \_|\__,_|\__|\__,_|_|  \__,_|_|   &e|____/|_|\_\_|_|_|\n" +
+                    "&f       >> &bNaturalSkills v" + getDescription().getVersion() + " Enabled! <<\n" +
+                    "&a===============\n"
+                )
+        );
                 )
         );
     }
