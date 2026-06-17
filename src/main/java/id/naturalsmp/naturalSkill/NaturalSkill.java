@@ -85,8 +85,6 @@ public final class NaturalSkill extends JavaPlugin {
                     "&a===============\n"
                 )
         );
-                )
-        );
     }
 
     @Override
