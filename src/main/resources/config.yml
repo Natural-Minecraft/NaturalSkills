@@ -334,6 +334,47 @@ progression:
         - ""
         - "&aEfek Pasif:"
         - "&7- Tambahan Speed Berenang: &e%level% x 0.1% &7(Saat ini: &e%percent%%&7)"
+    arsitek:
+      name: "&9&lArsitek (Builder)"
+      icon: "BRICKS"
+      slot: 29
+      lore:
+        - "&7Keahlian seorang pembangun sejati."
+        - "&7Level: &e%level% &7/ &e%max_level%"
+        - "&7Progress: &b%xp% &7/ &b%req_xp% XP &7(%percent%%)"
+        - "&7%progress_bar%"
+        - ""
+        - "&eSumber XP:"
+        - "&7- Menaruh blok bangunan biasa: &a+0.8 XP"
+        - "&7- Menaruh Bricks / Concrete: &a+2.0 XP"
+        - "&7- Menaruh Terracotta: &a+1.5 XP"
+        - "&7- Menaruh Glass / Kaca: &a+2.5 XP"
+        - "&7- Menaruh Glazed Terracotta: &a+3.0 XP"
+        - ""
+        - "&aEfek Pasif:"
+        - "&7- Blok yang ditempatkan tidak merusak tool: &e+1 Durability &7saved/Lv"
+        - "&7- Peluang mendapat exp bangunan: &e%level% x 0.3%"
+    teknik_mesin:
+      name: "&6&lTeknik Mesin (Redstoner)"
+      icon: "REDSTONE"
+      slot: 33
+      lore:
+        - "&7Ahli dalam rangkaian redstone & mekanisme."
+        - "&7Level: &e%level% &7/ &e%max_level%"
+        - "&7Progress: &b%xp% &7/ &b%req_xp% XP &7(%percent%%)"
+        - "&7%progress_bar%"
+        - ""
+        - "&eSumber XP:"
+        - "&7- Menaruh Repeater / Comparator: &a+8.0 XP"
+        - "&7- Menaruh Piston / Observer: &a+6.0 XP"
+        - "&7- Menaruh Hopper / Dropper / Dispenser: &a+5.0 XP"
+        - "&7- Menaruh Redstone Wire: &a+2.0 XP"
+        - "&7- Komponen Redstone lainnya: &a+5.0 XP"
+        - ""
+        - "&aEfek Pasif:"
+        - "&7- Redstone signal strength +: &e+%level% x 0.02 &7max"
+        - "&7- Bonus drop Redstone: &e%level% x 0.5%"
+
 
   # XP Sources Definitions used by listener
   xp_sources:
@@ -408,3 +449,114 @@ progression:
       chat: 3.0
       chat_cooldown_ms: 10000
       trade: 10.0
+    arsitek:
+      default_block_xp: 0.8
+      blocks:
+        bricks: 2.0
+        nether_bricks: 2.0
+        red_nether_bricks: 2.0
+        stone_bricks: 2.5
+        mossy_stone_bricks: 2.5
+        cracked_stone_bricks: 2.5
+        chiseled_stone_bricks: 3.0
+        white_concrete: 2.0
+        orange_concrete: 2.0
+        magenta_concrete: 2.0
+        light_blue_concrete: 2.0
+        yellow_concrete: 2.0
+        lime_concrete: 2.0
+        pink_concrete: 2.0
+        gray_concrete: 2.0
+        light_gray_concrete: 2.0
+        cyan_concrete: 2.0
+        purple_concrete: 2.0
+        blue_concrete: 2.0
+        brown_concrete: 2.0
+        green_concrete: 2.0
+        red_concrete: 2.0
+        black_concrete: 2.0
+        white_terracotta: 1.5
+        orange_terracotta: 1.5
+        magenta_terracotta: 1.5
+        light_blue_terracotta: 1.5
+        yellow_terracotta: 1.5
+        lime_terracotta: 1.5
+        pink_terracotta: 1.5
+        gray_terracotta: 1.5
+        light_gray_terracotta: 1.5
+        cyan_terracotta: 1.5
+        purple_terracotta: 1.5
+        blue_terracotta: 1.5
+        brown_terracotta: 1.5
+        green_terracotta: 1.5
+        red_terracotta: 1.5
+        black_terracotta: 1.5
+        white_glazed_terracotta: 3.0
+        orange_glazed_terracotta: 3.0
+        magenta_glazed_terracotta: 3.0
+        light_blue_glazed_terracotta: 3.0
+        yellow_glazed_terracotta: 3.0
+        lime_glazed_terracotta: 3.0
+        pink_glazed_terracotta: 3.0
+        gray_glazed_terracotta: 3.0
+        light_gray_glazed_terracotta: 3.0
+        cyan_glazed_terracotta: 3.0
+        purple_glazed_terracotta: 3.0
+        blue_glazed_terracotta: 3.0
+        brown_glazed_terracotta: 3.0
+        green_glazed_terracotta: 3.0
+        red_glazed_terracotta: 3.0
+        black_glazed_terracotta: 3.0
+        glass: 2.5
+        white_stained_glass: 2.5
+        orange_stained_glass: 2.5
+        magenta_stained_glass: 2.5
+        light_blue_stained_glass: 2.5
+        yellow_stained_glass: 2.5
+        lime_stained_glass: 2.5
+        pink_stained_glass: 2.5
+        gray_stained_glass: 2.5
+        light_gray_stained_glass: 2.5
+        cyan_stained_glass: 2.5
+        purple_stained_glass: 2.5
+        blue_stained_glass: 2.5
+        brown_stained_glass: 2.5
+        green_stained_glass: 2.5
+        red_stained_glass: 2.5
+        black_stained_glass: 2.5
+        glass_pane: 2.5
+        oak_stairs: 1.2
+        spruce_stairs: 1.2
+        birch_stairs: 1.2
+        jungle_stairs: 1.2
+        acacia_stairs: 1.2
+        dark_oak_stairs: 1.2
+        stone_stairs: 1.5
+        cobblestone_stairs: 1.2
+        sandstone_stairs: 1.5
+        quartz_stairs: 2.0
+        purpur_stairs: 2.0
+        prismarine_stairs: 2.0
+    teknik_mesin:
+      redstone_place: 5.0
+      # Per-component overrides (fallback to redstone_place if not specified)
+      blocks:
+        repeater: 8.0
+        comparator: 8.0
+        observer: 6.0
+        piston: 6.0
+        sticky_piston: 6.0
+        hopper: 5.0
+        dropper: 5.0
+        dispenser: 5.0
+        redstone_wire: 2.0
+        lever: 3.0
+        daylight_detector: 7.0
+        target: 7.0
+        lightning_rod: 6.0
+        note_block: 4.0
+        trapped_chest: 5.0
+        tnt: 4.0
+        redstone_lamp: 4.0
+        redstone_torch: 3.0
+

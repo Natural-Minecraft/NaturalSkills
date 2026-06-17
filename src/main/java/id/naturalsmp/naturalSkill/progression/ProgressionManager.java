@@ -44,6 +44,8 @@ public class ProgressionManager {
         attributeUuids.put("swimming", UUID.fromString("8f0d2c4b-6a5b-4c3d-2e1f-0a9b8c7d6e5f"));
         attributeUuids.put("fishing", UUID.fromString("9f1d3c5b-7a6b-5c4d-3e2f-1a0b9c8d7e6f"));
         attributeUuids.put("farming", UUID.fromString("0f2d4c6b-8a7b-6c5d-4e3f-2a1b0c9d8e7f"));
+        attributeUuids.put("arsitek", UUID.fromString("af3e5d7c-9b8a-4d6e-5f4a-3b2c1d0e9f88"));
+        attributeUuids.put("teknik_mesin", UUID.fromString("bf4e6d8c-0b9a-4d7e-6f5a-4b3c2d1e0f9a"));
     }
 
     /**

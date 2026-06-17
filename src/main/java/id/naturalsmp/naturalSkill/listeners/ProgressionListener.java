@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.ClickType;
@@ -271,5 +272,87 @@ public class ProgressionListener implements Listener {
         }
         double multiplier = plugin.getConfigManager().getConfig().getDouble("progression.xp_sources.psychology.eat_food_multiplier", 4.0);
         plugin.getProgressionManager().addXp(player, "psychology", foodLevel * multiplier, false);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        Material mat = event.getBlock().getType();
+        String matName = mat.name().toLowerCase();
+
+        // 1. Arsitek Bakat - placing building blocks
+        if (plugin.getConfigManager().getConfig().contains("progression.xp_sources.arsitek.blocks." + matName)) {
+            double xp = plugin.getConfigManager().getConfig().getDouble("progression.xp_sources.arsitek.blocks." + matName, 1.0);
+            plugin.getProgressionManager().addXp(player, "arsitek", xp, true);
+            return;
+        }
+        // Fallback: any solid building block gives a small amount
+        if (isBuildingBlock(mat)) {
+            double xp = plugin.getConfigManager().getConfig().getDouble("progression.xp_sources.arsitek.default_block_xp", 0.8);
+            plugin.getProgressionManager().addXp(player, "arsitek", xp, true);
+            return;
+        }
+
+        // 2. Teknik Mesin Bakat - placing redstone components
+        if (isRedstoneComponent(mat)) {
+            double xp;
+            String teknikKey = "progression.xp_sources.teknik_mesin.blocks." + matName;
+            if (plugin.getConfigManager().getConfig().contains(teknikKey)) {
+                xp = plugin.getConfigManager().getConfig().getDouble(teknikKey, 5.0);
+            } else {
+                xp = plugin.getConfigManager().getConfig().getDouble("progression.xp_sources.teknik_mesin.redstone_place", 5.0);
+            }
+            plugin.getProgressionManager().addXp(player, "teknik_mesin", xp, true);
+        }
+    }
+
+    private boolean isBuildingBlock(Material mat) {
+        String name = mat.name();
+        return name.endsWith("_PLANKS") || name.endsWith("_SLAB") || name.endsWith("_STAIRS")
+                || name.endsWith("_BRICKS") || name.endsWith("_WALL") || name.endsWith("_FENCE")
+                || name.endsWith("_GLASS") || name.endsWith("_GLASS_PANE")
+                || name.contains("STONE") || name.contains("CONCRETE") || name.contains("TERRACOTTA")
+                || name.contains("SANDSTONE") || name.contains("COBBLESTONE")
+                || mat == Material.STONE || mat == Material.DIRT || mat == Material.GRASS_BLOCK
+                || mat == Material.SAND || mat == Material.GRAVEL;
+    }
+
+    private boolean isRedstoneComponent(Material mat) {
+        switch (mat) {
+            case REDSTONE_WIRE:
+            case REPEATER:
+            case COMPARATOR:
+            case PISTON:
+            case STICKY_PISTON:
+            case OBSERVER:
+            case DROPPER:
+            case DISPENSER:
+            case HOPPER:
+            case LEVER:
+            case STONE_BUTTON:
+            case OAK_BUTTON:
+            case SPRUCE_BUTTON:
+            case BIRCH_BUTTON:
+            case JUNGLE_BUTTON:
+            case ACACIA_BUTTON:
+            case DARK_OAK_BUTTON:
+            case MANGROVE_BUTTON:
+            case CHERRY_BUTTON:
+            case CRIMSON_BUTTON:
+            case WARPED_BUTTON:
+            case POLISHED_BLACKSTONE_BUTTON:
+            case TRIPWIRE_HOOK:
+            case TARGET:
+            case LIGHTNING_ROD:
+            case NOTE_BLOCK:
+            case DAYLIGHT_DETECTOR:
+            case TRAPPED_CHEST:
+            case TNT:
+            case REDSTONE_LAMP:
+            case REDSTONE_TORCH:
+                return true;
+            default:
+                return false;
+        }
     }
 }
