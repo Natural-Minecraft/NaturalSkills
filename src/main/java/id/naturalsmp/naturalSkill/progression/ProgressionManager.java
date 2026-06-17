@@ -155,7 +155,7 @@ public class ProgressionManager {
                 double angle = y * Math.PI * 4; // 2 complete rotations
                 double x = 0.6 * Math.sin(angle);
                 double z = 0.6 * Math.cos(angle);
-                player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getLocation().add(x, y, z), 2, 0, 0, 0, 0);
+                player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation().add(x, y, z), 2, 0, 0, 0, 0);
                 try {
                     Thread.sleep(15);
                 } catch (InterruptedException ignored) {}
