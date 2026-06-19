@@ -83,7 +83,7 @@ public final class NaturalSkill extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(
                 id.naturalsmp.naturalSkill.config.ConfigManager.color(
                     "\n&a================================================================================\n" +
-                    "&a _   _       _                               _      &e ____  _    _ _ _\n" +
+                    "&a _   _       _                             _        &e ____  _    _ _ _\n" +
                     "&a| \\ | | __ _| |_ _   _ _ __ __ _  | |   &e/ ___|| | _(_) | |\n" +
                     "&a|  \\| |/ _` | __| | | | '__/ _` | | |   &e\\___ \\| |/ / | | |\n" +
                     "&a| |\\  | (_| | |_| |_| | | | (_| | | |   &e ___) |   <| | | |\n" +

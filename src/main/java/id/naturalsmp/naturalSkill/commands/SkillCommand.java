@@ -109,8 +109,8 @@ public class SkillCommand implements CommandExecutor {
                 // Use cache-only lookup to avoid blocking the main thread with a Mojang API call
                 target = Bukkit.getOfflinePlayerIfCached(targetName);
             }
-            if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
-                sender.sendMessage(plugin.getConfigManager().getMessage("player-not-found").replace("%player%", targetName));
+             if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
+                sender.sendMessage(ConfigManager.color(plugin.getConfigManager().getMessage("player-not-found").replace("%player%", targetName)));
                 return true;
             }
 
@@ -122,23 +122,23 @@ public class SkillCommand implements CommandExecutor {
             if (sub.equals("give")) {
                 data.addPoints(amount);
                 finalPoints = data.getPoints();
-                sender.sendMessage(plugin.getConfigManager().getMessage("points-given")
+                sender.sendMessage(ConfigManager.color(plugin.getConfigManager().getMessage("points-given")
                         .replace("%player%", targetName)
                         .replace("%amount%", String.valueOf(amount))
-                        .replace("%total%", String.valueOf(finalPoints)));
+                        .replace("%total%", String.valueOf(finalPoints))));
             } else if (sub.equals("take")) {
                 data.removePoints(amount);
                 finalPoints = data.getPoints();
-                sender.sendMessage(plugin.getConfigManager().getMessage("points-taken")
+                sender.sendMessage(ConfigManager.color(plugin.getConfigManager().getMessage("points-taken")
                         .replace("%player%", targetName)
                         .replace("%amount%", String.valueOf(amount))
-                        .replace("%total%", String.valueOf(finalPoints)));
+                        .replace("%total%", String.valueOf(finalPoints))));
             } else if (sub.equals("set")) {
                 data.setPoints(amount);
                 finalPoints = data.getPoints();
-                sender.sendMessage(plugin.getConfigManager().getMessage("points-set")
+                sender.sendMessage(ConfigManager.color(plugin.getConfigManager().getMessage("points-set")
                         .replace("%player%", targetName)
-                        .replace("%amount%", String.valueOf(amount)));
+                        .replace("%amount%", String.valueOf(amount))));
             }
 
             // Save data

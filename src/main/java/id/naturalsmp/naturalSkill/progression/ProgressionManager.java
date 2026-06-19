@@ -78,7 +78,7 @@ public class ProgressionManager {
 
         boolean leveledUp = false;
         while (newXp >= reqXp) {
-            int maxLevel = plugin.getConfigManager().getConfig().getInt("progression.max-level", 50);
+            int maxLevel = isBakat ? plugin.getConfigManager().getConfig().getInt("progression.bakat-max-level", 50) : plugin.getConfigManager().getConfig().getInt("progression.skill-max-level", 255);
             if (level >= maxLevel) {
                 newXp = reqXp; // Cap XP at max level
                 break;

@@ -19,7 +19,7 @@ categories:
   intelligence:
     name: "&b&lIntelligence"
     icon: "BOOK"
-    slot: 11
+    slot: 20
     lore:
       - "&7Meningkatkan kapasitas berpikir,"
       - "&7logika, dan pemahaman Anda."
@@ -74,7 +74,7 @@ categories:
   strength:
     name: "&c&lStrength"
     icon: "IRON_SWORD"
-    slot: 13
+    slot: 22
     lore:
       - "&7Meningkatkan kekuatan fisik,"
       - "&7daya tahan, dan daya serang."
@@ -113,7 +113,7 @@ categories:
   agility:
     name: "&a&lAgility"
     icon: "FEATHER"
-    slot: 15
+    slot: 24
     lore:
       - "&7Meningkatkan kelincahan, kecepatan,"
       - "&7dan refleks Anda."
@@ -206,6 +206,8 @@ gui:
 
 progression:
   max-level: 50
+  bakat-max-level: 50
+  skill-max-level: 255
   points-per-level: 1
   xp-curve:
     base: 100.0

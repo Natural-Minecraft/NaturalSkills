@@ -81,12 +81,13 @@ public class SkillGui {
      * 1. Player Main Menu
      */
     public void openMainMenu() {
-        String title = plugin.getConfigManager().getMessage("gui-title-main");
+        String title = ConfigManager.color(plugin.getConfigManager().getMessage("gui-title-main"));
         SkillInventoryHolder holder = new SkillInventoryHolder("main", null, null);
         Inventory inv = Bukkit.createInventory(holder, 54, title);
         holder.setInventory(inv);
 
-        fillDecorations(inv);
+        // Fill borders & AIR background
+        fillMainMenuBorders(inv);
 
         // Player Info Book in slot 4 - shows levels as well
         inv.setItem(4, createItem(Material.BOOK, "&e&lStatistik Poin & Keahlian", Arrays.asList(
@@ -116,7 +117,17 @@ public class SkillGui {
             }
         }
 
-        // Bakat Button in slot 31
+        // Skill Shop Button in slot 31
+        String shopName = "&b&lSkill Shop &7[Klik]";
+        List<String> shopLore = Arrays.asList(
+                "&7Toko pembelian skill pasif",
+                "&7menggunakan Skill Points (SP) Anda.",
+                "",
+                "&eKlik untuk membuka Skill Shop!"
+        );
+        inv.setItem(31, createItem(Material.EMERALD, shopName, shopLore));
+
+        // Bakat Button in slot 40
         String bakatMat = config.getString("gui.decorations.bakat_button.material", "GOLDEN_HOE");
         String bakatName = config.getString("gui.decorations.bakat_button.name", "&6&lKeahlian Bakat &7[Klik]");
         List<String> bakatLore = config.getStringList("gui.decorations.bakat_button.lore");
@@ -129,73 +140,104 @@ public class SkillGui {
                     "&eKlik untuk melihat perkembangan bakat!"
             );
         }
-        inv.setItem(31, createItem(getMaterial(bakatMat, Material.GOLDEN_HOE), bakatName, bakatLore));
-
-        player.openInventory(inv);
-    }
-
-    /**
-     * 2. Player Category Submenu
-     */
-    public void openCategoryMenu(String categoryId) {
-        FileConfiguration config = plugin.getConfigManager().getConfig();
-        String catName = config.getString("categories." + categoryId + ".name", categoryId);
-        String title = plugin.getConfigManager().getMessage("gui-title-category")
-                .replace("%category%", catName);
-
-        SkillInventoryHolder holder = new SkillInventoryHolder("category", categoryId, null);
-        Inventory inv = Bukkit.createInventory(holder, 54, title);
-        holder.setInventory(inv);
-
-        fillDecorations(inv);
-
-        // Player Stats in slot 4
-        inv.setItem(4, createItem(Material.BOOK, "&e&lStatistik Poin", Arrays.asList(
-                "&7Pemain: &a" + player.getName(),
-                "&7Skill Points: &e" + playerData.getPoints() + " SP",
-                "&7Kategori: " + catName
-        )));
-
-        // Load branches
-        ConfigurationSection branches = config.getConfigurationSection("categories." + categoryId + ".branches");
-        if (branches != null) {
-            for (String branchId : branches.getKeys(false)) {
-                String name = branches.getString(branchId + ".name", branchId);
-                String materialName = branches.getString(branchId + ".icon", "ENCHANTED_BOOK");
-                Material material = getMaterial(materialName, Material.ENCHANTED_BOOK);
-                int slot = branches.getInt(branchId + ".slot", 22);
-                int cost = branches.getInt(branchId + ".cost", 0);
-                String prereq = branches.getString(branchId + ".prerequisite", "");
-
-                // Determine status
-                String status;
-                String fullKey = categoryId + "." + branchId;
-                if (playerData.isSkillUnlocked(fullKey)) {
-                    status = plugin.getConfigManager().getMessage("gui-unlocked-status");
-                } else if (!prereq.isEmpty() && !playerData.isSkillUnlocked(categoryId + "." + prereq)) {
-                    status = plugin.getConfigManager().getMessage("gui-locked-status");
-                } else if (playerData.getPoints() >= cost) {
-                    status = plugin.getConfigManager().getMessage("gui-purchasable-status");
-                } else {
-                    status = plugin.getConfigManager().getMessage("gui-locked-status") + " &c(Poin kurang)";
-                }
-
-                List<String> rawLore = branches.getStringList(branchId + ".lore");
-                List<String> formattedLore = new ArrayList<>();
-                for (String line : rawLore) {
-                    formattedLore.add(line
-                            .replace("%cost%", String.valueOf(cost))
-                            .replace("%status%", status));
-                }
-
-                inv.setItem(slot, createItem(material, name, formattedLore));
-            }
-        }
+        inv.setItem(40, createItem(getMaterial(bakatMat, Material.GOLDEN_HOE), bakatName, bakatLore));
 
         // Back button in slot 49
         inv.setItem(49, getBackButton());
 
         player.openInventory(inv);
+    }
+
+    /**
+     * 2. Player Category Submenu (Level Path Snake GUI 1-255)
+     */
+    public void openCategoryMenu(String categoryId, int page) {
+        FileConfiguration config = plugin.getConfigManager().getConfig();
+        String catName = config.getString("categories." + categoryId + ".name", categoryId);
+        String titleTemplate = plugin.getConfigManager().getMessages().getString("gui-title-category", "&0Skill: %category%");
+        String title = ConfigManager.color(titleTemplate
+                .replace("%category%", catName)
+                .replace("%prefix%", "")) + ConfigManager.color(" &7- Page " + page);
+
+        SkillInventoryHolder holder = new SkillInventoryHolder("category", categoryId, null, page);
+        Inventory inv = Bukkit.createInventory(holder, 54, title);
+        holder.setInventory(inv);
+
+        // Max levels is 255. Max pages is ceil(255 / 19.0) = 14
+        int maxPage = 14;
+
+        // Fill borders & AIR background
+        fillOtherMenuBorders(inv, page, maxPage);
+
+        // Player Stats in slot 4
+        int playerLevel = playerData.getSkillLevel(categoryId);
+        double playerXp = playerData.getSkillXp(categoryId);
+        int reqXp = plugin.getProgressionManager().getRequiredXp(playerLevel);
+
+        inv.setItem(4, createItem(Material.BOOK, "&e&lStatistik Level", Arrays.asList(
+                "&7Pemain: &a" + player.getName(),
+                "&7Skill: " + catName,
+                "&7Level Saat Ini: &eLvl " + playerLevel,
+                "&7Progress: &b" + String.format(Locale.US, "%.1f", playerXp) + " &7/ &b" + reqXp + " XP"
+        )));
+
+        // Back button in slot 49
+        inv.setItem(49, getBackButton());
+
+        // Fill snake path level items (19 levels per page)
+        int startLvl = (page - 1) * 19 + 1;
+
+        for (int i = 1; i <= 19; i++) {
+            int levelNum = startLvl + i - 1;
+            if (levelNum > 255) break;
+
+            int slot = getSnakeSlot(i);
+            if (slot == -1) continue;
+
+            boolean isUnlocked = levelNum <= playerLevel;
+            boolean isActive = levelNum == playerLevel + 1;
+
+            Material material;
+            String displayName;
+            List<String> lore = new ArrayList<>();
+
+            if (isUnlocked) {
+                material = Material.LIME_STAINED_GLASS_PANE;
+                displayName = "&a&lLevel " + levelNum + " &7[Terbuka]";
+                lore.add("&7Status: &aTerbuka");
+            } else if (isActive) {
+                material = Material.YELLOW_STAINED_GLASS_PANE;
+                displayName = "&e&lLevel " + levelNum + " &7[Progres Aktif]";
+                lore.add("&7Status: &eProgres Aktif");
+            } else {
+                material = Material.RED_STAINED_GLASS_PANE;
+                displayName = "&c&lLevel " + levelNum + " &7[Terkunci]";
+                lore.add("&7Status: &cTerkunci");
+            }
+
+            lore.add("");
+            lore.add("&aKeuntungan Pasif:");
+            lore.addAll(getLevelBenefits(categoryId, levelNum));
+            lore.add("");
+
+            lore.add("&bProgress Ke Level Ini:");
+            if (isUnlocked) {
+                lore.add(getProgressBar(100, 100, 10, '■', "&a", "&7") + " &f(100.0%)");
+            } else if (isActive) {
+                double pct = (double) playerXp / reqXp * 100.0;
+                lore.add(getProgressBar((int) playerXp, reqXp, 10, '■', "&a", "&7") + " &f(" + String.format(Locale.US, "%.1f", pct) + "%)");
+            } else {
+                lore.add(getProgressBar(0, 100, 10, '■', "&a", "&7") + " &f(0.0%)");
+            }
+
+            inv.setItem(slot, createItem(material, displayName, lore));
+        }
+
+        player.openInventory(inv);
+    }
+
+    public void openCategoryMenu(String categoryId) {
+        openCategoryMenu(categoryId, 1);
     }
 
     /**
@@ -517,7 +559,7 @@ public class SkillGui {
                 int level = playerData.getBakatLevel(key);
                 double xp = playerData.getBakatXp(key);
                 int reqXp = plugin.getProgressionManager().getRequiredXp(level);
-                int maxLevel = config.getInt("progression.max-level", 50);
+                int maxLevel = config.getInt("progression.bakat-max-level", 50);
 
                 double percent = (double) xp / reqXp * 100.0;
                 String percentStr = String.format(Locale.US, "%.1f", percent);
@@ -553,5 +595,278 @@ public class SkillGui {
         int activeCount = (int) (percent * barLength);
         int inactiveCount = barLength - activeCount;
         return activeColor + String.valueOf(symbol).repeat(activeCount) + inactiveColor + String.valueOf(symbol).repeat(inactiveCount);
+    }
+
+    /* NaturalSkills GUI Remake Helpers */
+
+    private void fillMainMenuBorders(Inventory inv) {
+        ItemStack bluePane = createItem(Material.BLUE_STAINED_GLASS_PANE, " ", List.of());
+        
+        // Row 1: AIR (slots 0-3, 5-8), Stats book in slot 4
+        for (int i = 0; i <= 3; i++) inv.setItem(i, null);
+        for (int i = 5; i <= 8; i++) inv.setItem(i, null);
+
+        // Row 2: all blue stained glass panes (slots 9-17)
+        for (int i = 9; i <= 17; i++) {
+            inv.setItem(i, bluePane);
+        }
+
+        // Row 3-5: borders are blue stained glass panes
+        inv.setItem(18, bluePane);
+        inv.setItem(26, bluePane);
+        inv.setItem(27, bluePane);
+        inv.setItem(35, bluePane);
+        inv.setItem(36, bluePane);
+        inv.setItem(44, bluePane);
+
+        // Row 6: slots 45-48, 50-53 are blue stained glass panes
+        for (int i = 45; i <= 48; i++) {
+            inv.setItem(i, bluePane);
+        }
+        for (int i = 50; i <= 53; i++) {
+            inv.setItem(i, bluePane);
+        }
+    }
+
+    private void fillOtherMenuBorders(Inventory inv, int page, int maxPage) {
+        ItemStack bluePane = createItem(Material.BLUE_STAINED_GLASS_PANE, " ", List.of());
+
+        // Row 1: slots 0-3 and 5-8 are blue stained glass panes
+        for (int i = 0; i <= 3; i++) inv.setItem(i, bluePane);
+        for (int i = 5; i <= 8; i++) inv.setItem(i, bluePane);
+
+        // Row 2: slots 9 and 17 are blue
+        inv.setItem(9, bluePane);
+        inv.setItem(17, bluePane);
+
+        // Row 3: slots 18 and 26 are blue
+        inv.setItem(18, bluePane);
+        inv.setItem(26, bluePane);
+
+        // Row 4: slot 27 is Prev page, slot 35 is Next page
+        ItemStack prevButton = createItem(Material.PAPER, "&a&l[Halaman Sebelumnya] &7Page " + (page - 1), List.of("&7Klik untuk kembali"));
+        ItemStack nextButton = createItem(Material.PAPER, "&a&l[Halaman Berikutnya] &7Page " + (page + 1), List.of("&7Klik untuk lanjut"));
+        
+        if (page > 1) {
+            inv.setItem(27, prevButton);
+        } else {
+            inv.setItem(27, bluePane);
+        }
+
+        if (page < maxPage) {
+            inv.setItem(35, nextButton);
+        } else {
+            inv.setItem(35, bluePane);
+        }
+
+        // Row 5: slots 36 and 44 are blue
+        inv.setItem(36, bluePane);
+        inv.setItem(44, bluePane);
+
+        // Row 6: slots 45-48 and 50-53 are blue
+        for (int i = 45; i <= 48; i++) {
+            inv.setItem(i, bluePane);
+        }
+        for (int i = 50; i <= 53; i++) {
+            inv.setItem(i, bluePane);
+        }
+    }
+
+    public static int getSnakeSlot(int relativeLevel) {
+        switch (relativeLevel) {
+            case 1: return 10;
+            case 2: return 19;
+            case 3: return 28;
+            case 4: return 37;
+            case 5: return 38;
+            case 6: return 39;
+            case 7: return 30;
+            case 8: return 21;
+            case 9: return 12;
+            case 10: return 13;
+            case 11: return 14;
+            case 12: return 23;
+            case 13: return 32;
+            case 14: return 41;
+            case 15: return 42;
+            case 16: return 43;
+            case 17: return 34;
+            case 18: return 25;
+            case 19: return 16;
+            default: return -1;
+        }
+    }
+
+    private List<String> getLevelBenefits(String categoryId, int levelNum) {
+        List<String> benefits = new ArrayList<>();
+        FileConfiguration config = plugin.getConfigManager().getConfig();
+
+        // 1. Check per_level effects
+        ConfigurationSection perLevelSec = config.getConfigurationSection("progression.skills." + categoryId + ".effects.per_level");
+        if (perLevelSec != null) {
+            for (String key : perLevelSec.getKeys(false)) {
+                double perLvlVal = perLevelSec.getDouble(key);
+                double totalVal = perLvlVal * levelNum;
+                if (perLvlVal > 0) {
+                    String displayName = formatAttributeName(key, totalVal);
+                    benefits.add("&7- " + displayName);
+                }
+            }
+        }
+
+        // 2. Check milestone levels
+        ConfigurationSection milestoneSec = config.getConfigurationSection("progression.skills." + categoryId + ".effects.levels." + levelNum);
+        if (milestoneSec != null) {
+            if (milestoneSec.contains("attributes")) {
+                ConfigurationSection attrSec = milestoneSec.getConfigurationSection("attributes");
+                if (attrSec != null) {
+                    for (String key : attrSec.getKeys(false)) {
+                        double val = attrSec.getDouble(key);
+                        String displayName = formatAttributeName(key, val);
+                        benefits.add("&e&l[Milestone] &a" + displayName);
+                    }
+                }
+            }
+            if (milestoneSec.contains("message")) {
+                String msg = milestoneSec.getString("message");
+                if (msg != null && !msg.isEmpty()) {
+                    benefits.add("&e&l[Reward]: &f" + msg);
+                }
+            }
+        }
+
+        if (benefits.isEmpty()) {
+            benefits.add("&7- &oTidak ada efek pasif khusus");
+        }
+
+        return benefits;
+    }
+
+    private String formatAttributeName(String rawKey, double value) {
+        String prettyName = rawKey.toUpperCase();
+        if (rawKey.equalsIgnoreCase("damage_percent")) {
+            return "+" + String.format(Locale.US, "%.1f", value * 100.0) + "% Attack Damage";
+        }
+        if (rawKey.equalsIgnoreCase("damage_flat")) {
+            return "+" + String.format(Locale.US, "%.1f", value) + " Attack Damage";
+        }
+        if (rawKey.equalsIgnoreCase("GENERIC_MAX_HEALTH")) {
+            return "+" + String.format(Locale.US, "%.1f", value / 2.0) + " Hearts"; // 2.0 = 1 heart
+        }
+        if (rawKey.equalsIgnoreCase("GENERIC_MOVEMENT_SPEED")) {
+            return "+" + String.format(Locale.US, "%.1f", value * 1000.0) + "% Speed";
+        }
+        return "+" + value + " " + prettyName;
+    }
+
+    public static final List<Integer> CONTENT_SLOTS = Arrays.asList(
+        10, 11, 12, 13, 14, 15, 16,
+        19, 20, 21, 22, 23, 24, 25,
+        28, 29, 30, 31, 32, 33, 34,
+        37, 38, 39, 40, 41, 42, 43
+    );
+
+    public static class ShopItemRecord {
+        private final String categoryId;
+        private final String branchId;
+
+        public ShopItemRecord(String categoryId, String branchId) {
+            this.categoryId = categoryId;
+            this.branchId = branchId;
+        }
+
+        public String getCategoryId() {
+            return categoryId;
+        }
+
+        public String getBranchId() {
+            return branchId;
+        }
+    }
+
+    public List<ShopItemRecord> getAllShopItems() {
+        List<ShopItemRecord> list = new ArrayList<>();
+        FileConfiguration config = plugin.getConfigManager().getConfig();
+        ConfigurationSection categories = config.getConfigurationSection("categories");
+        if (categories != null) {
+            for (String catId : categories.getKeys(false)) {
+                ConfigurationSection branches = config.getConfigurationSection("categories." + catId + ".branches");
+                if (branches != null) {
+                    for (String branchId : branches.getKeys(false)) {
+                        list.add(new ShopItemRecord(catId, branchId));
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public void openShopMenu(int page) {
+        String title = ConfigManager.color("&0Skill Shop &7- Page " + page);
+        SkillInventoryHolder holder = new SkillInventoryHolder("shop", null, null, page);
+        Inventory inv = Bukkit.createInventory(holder, 54, title);
+        holder.setInventory(inv);
+
+        List<ShopItemRecord> allItems = getAllShopItems();
+        int maxPage = (int) Math.ceil(allItems.size() / 28.0);
+        if (maxPage < 1) maxPage = 1;
+
+        fillOtherMenuBorders(inv, page, maxPage);
+
+        // Player Stats in slot 4
+        inv.setItem(4, createItem(Material.BOOK, "&e&lStatistik Poin", Arrays.asList(
+                "&7Pemain: &a" + player.getName(),
+                "&7Skill Points: &e" + playerData.getPoints() + " SP",
+                "&7Gunakan SP untuk membeli skill di bawah!"
+        )));
+
+        // Back button in slot 49
+        inv.setItem(49, getBackButton());
+
+        // Fill content
+        int startIdx = (page - 1) * 28;
+        FileConfiguration config = plugin.getConfigManager().getConfig();
+
+        for (int i = 0; i < 28; i++) {
+            int itemIdx = startIdx + i;
+            if (itemIdx >= allItems.size()) break;
+
+            ShopItemRecord shopItem = allItems.get(itemIdx);
+            String catId = shopItem.getCategoryId();
+            String branchId = shopItem.getBranchId();
+
+            String path = "categories." + catId + ".branches." + branchId;
+            String name = config.getString(path + ".name", branchId);
+            String materialName = config.getString(path + ".icon", "ENCHANTED_BOOK");
+            Material material = getMaterial(materialName, Material.ENCHANTED_BOOK);
+            int cost = config.getInt(path + ".cost", 0);
+            String prereq = config.getString(path + ".prerequisite", "");
+
+            // Status string translation with dynamic color fixing
+            String status;
+            String fullKey = catId + "." + branchId;
+            if (playerData.isSkillUnlocked(fullKey)) {
+                status = ConfigManager.color(plugin.getConfigManager().getMessage("gui-unlocked-status"));
+            } else if (!prereq.isEmpty() && !playerData.isSkillUnlocked(catId + "." + prereq)) {
+                status = ConfigManager.color(plugin.getConfigManager().getMessage("gui-locked-status"));
+            } else if (playerData.getPoints() >= cost) {
+                status = ConfigManager.color(plugin.getConfigManager().getMessage("gui-purchasable-status"));
+            } else {
+                status = ConfigManager.color(plugin.getConfigManager().getMessage("gui-locked-status")) + " &c(Poin kurang)";
+            }
+
+            List<String> rawLore = config.getStringList(path + ".lore");
+            List<String> formattedLore = new ArrayList<>();
+            for (String line : rawLore) {
+                formattedLore.add(ConfigManager.color(line
+                        .replace("%cost%", String.valueOf(cost))
+                        .replace("%status%", status)));
+            }
+
+            int slot = CONTENT_SLOTS.get(i);
+            inv.setItem(slot, createItem(material, name, formattedLore));
+        }
+
+        player.openInventory(inv);
     }
 }

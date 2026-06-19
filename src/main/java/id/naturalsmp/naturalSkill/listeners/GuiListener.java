@@ -61,8 +61,18 @@ public class GuiListener implements Listener {
         FileConfiguration config = plugin.getConfigManager().getConfig();
 
         if (menuType.equals("main")) {
-            // Check bakat button click
+            // Main menu: click back button (slot 49)
+            if (slot == 49) {
+                player.closeInventory();
+                return;
+            }
+            // Check skill shop button click (slot 31)
             if (slot == 31) {
+                gui.openShopMenu(1);
+                return;
+            }
+            // Check bakat button click (slot 40)
+            if (slot == 40) {
                 gui.openBakatMenu();
                 return;
             }
@@ -71,7 +81,7 @@ public class GuiListener implements Listener {
             if (categories != null) {
                 for (String catId : categories.getKeys(false)) {
                     if (categories.getInt(catId + ".slot") == slot) {
-                        gui.openCategoryMenu(catId);
+                        gui.openCategoryMenu(catId, 1);
                         return;
                     }
                 }
@@ -84,19 +94,58 @@ public class GuiListener implements Listener {
             }
         } else if (menuType.equals("category")) {
             String catId = holder.getCategoryId();
-            // Category menu: click branch or back button (slot 49)
+            // Category menu: click back button (slot 49)
             if (slot == 49) {
                 gui.openMainMenu();
                 return;
             }
+            // Pagination check
+            if (slot == 27) { // prev page
+                int page = holder.getPage();
+                if (page > 1) {
+                    gui.openCategoryMenu(catId, page - 1);
+                }
+                return;
+            }
+            if (slot == 35) { // next page
+                int page = holder.getPage();
+                if (page < 14) {
+                    gui.openCategoryMenu(catId, page + 1);
+                }
+                return;
+            }
+        } else if (menuType.equals("shop")) {
+            // Shop menu: click back button (slot 49)
+            if (slot == 49) {
+                gui.openMainMenu();
+                return;
+            }
+            // Pagination check
+            if (slot == 27) { // prev page
+                int page = holder.getPage();
+                if (page > 1) {
+                    gui.openShopMenu(page - 1);
+                }
+                return;
+            }
+            if (slot == 35) { // next page
+                int page = holder.getPage();
+                List<SkillGui.ShopItemRecord> allItems = gui.getAllShopItems();
+                if (page * 28 < allItems.size()) {
+                    gui.openShopMenu(page + 1);
+                }
+                return;
+            }
 
-            ConfigurationSection branches = config.getConfigurationSection("categories." + catId + ".branches");
-            if (branches != null) {
-                for (String branchId : branches.getKeys(false)) {
-                    if (branches.getInt(branchId + ".slot") == slot) {
-                        gui.purchaseSkill(catId, branchId);
-                        return;
-                    }
+            // Handle buyable skill click
+            int index = SkillGui.CONTENT_SLOTS.indexOf(slot);
+            if (index != -1) {
+                int page = holder.getPage();
+                int itemIndex = (page - 1) * 28 + index;
+                List<SkillGui.ShopItemRecord> allItems = gui.getAllShopItems();
+                if (itemIndex >= 0 && itemIndex < allItems.size()) {
+                    SkillGui.ShopItemRecord item = allItems.get(itemIndex);
+                    gui.purchaseSkill(item.getCategoryId(), item.getBranchId());
                 }
             }
         } else if (menuType.equals("admin_main")) {
